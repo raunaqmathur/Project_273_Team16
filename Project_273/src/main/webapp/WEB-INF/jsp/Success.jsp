@@ -19,11 +19,369 @@
 <html>
 
 <head>
-
     <title>Home</title>
+ 
 
     <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
     <script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+    
+    <script language="javascript" type="text/javascript">
+    var imageData= new Array(1000);
+	
+	createTwoDimensionalArray(3);
+	
+	var maxIndex = 0;
+	
+    jQuery.ajax({
+        type: "POST",
+        url: "http://localhost:8080/syncPhotos",
+        data:"1375341852757639",
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        success: function (data, status, jqXHR) {
+				
+        	//var i = 0;
+        	
+        	maxIndex = data.length;
+        	for(var i=0; i< data.length; i++)
+        	{
+        		
+        		imageData[i][0] = "\\resources\\img\\downloadedImages\\1375341852757639\\" + data[i];
+        		imageData[i][1] = "";
+        		imageData[i][2] = "";
+        		//i++;
+        	}
+        	
+        	if(maxIndex > 0)
+        	{
+        		document.getElementById('picDisplay').style.display = 'block';
+        		document.getElementById('picSmall').style.display = 'block';
+        			
+        	}
+        	
+        	
+        	
+        },
+
+        error: function (jqXHR, status, textStatus) {
+        // error handler
+
+        alert("error occured");
+
+        }
+
+        });
+
+    
+   	// Our index, boundry and scroll tracking variables
+		
+		var imageIndexFirst = 0;
+		
+		var imageIndexLast = 3;
+		
+		var continueScroll = 0;
+		
+		
+		
+		var minIndex = 0;
+		
+		
+		// This function creates our two dimensional array
+		
+		function createTwoDimensionalArray(arraySize) {
+		
+		    for (i = 0; i < imageData.length; ++ i)
+		
+		        imageData[i] = new Array(arraySize);
+		
+		}
+		
+		
+		// This function preloads the thumbnail images
+		
+		function preloadThumbnails() {
+		
+		    imageObject = new Image();
+		
+		    for (i = 0; i < imageData.length; ++ i)
+		
+		        imageObject.src = imageData[i][0];
+		
+		}
+		
+		
+		
+		// This function changes the text of a table cell
+		
+		function changeCellText(cellId,myCellData){
+		
+		    document.getElementById(cellId).innerHTML = myCellData;
+		
+		}
+		
+		
+		// This function changes the images
+		
+		function changeImage(ImageToChange,MyimageData){
+		
+		    document.getElementById(ImageToChange).setAttribute('src',MyimageData)
+		
+		}
+		
+		
+		// This function changes the image alternate text
+		
+		function changeImageAlt(ImageToChange,imageData){
+		
+		    document.getElementById(ImageToChange).setAttribute('alt',imageData)
+		
+		}
+		
+		
+		// This function changes the image alternate text
+		
+		function changeImageTitle(ImageToChange,imageData){
+		
+		    document.getElementById(ImageToChange).setAttribute('title',imageData)
+		
+		}
+		
+		
+		// This function changes the image onmouseover
+		
+		function changeImageOnMouseOver(ImageToChange,imageIndex){
+		
+		    document.getElementById(ImageToChange).setAttribute('onmouseover','handleThumbOnMouseOver(' + imageIndex + ');')
+		
+		}
+		
+		
+		// This function hanles calling on change function
+		
+		// for a thumbnail onmouseover event
+		
+		function handleThumbOnMouseOver(imageIndex){
+		
+		    changeImage('imageLarge',imageData[imageIndex][0]);
+		
+		    changeCellText('imageTitleCell',imageData[imageIndex][1]);
+		
+		    changeCellText('imageDescriptionCell',imageData[imageIndex][2]);
+		
+		    changeImageAlt('imageLarge',imageData[imageIndex][1] + ' - ' + imageData[imageIndex][2]);
+		
+		    changeImageTitle('imageLarge',imageData[imageIndex][1] + ' - ' + imageData[imageIndex][2]);
+		
+		}
+		
+		
+		// This function handles the scrolling in both directions
+		
+		function scrollImages(scrollDirection) {
+		
+		// We need a variable for holding our working index value
+		
+		    var currentIndex;
+		
+		// Determine which direction to scroll - default is down (left)
+		
+		    if (scrollDirection == 'up')
+		
+		    {
+		
+		// Only do work if we are not to the last image
+		
+		        if (imageIndexLast != maxIndex)
+		
+		        {
+		
+		// We set the color to black for both before we begin
+		
+		// If we reach the end during the process we'll change the "button" color to silver
+		
+		            document.getElementById('scrollPreviousCell').setAttribute('style','color: Black')
+		
+		            document.getElementById('scrollNextCell').setAttribute('style','color: Black')
+		
+		// Move our tracking indexes up one
+		
+		            imageIndexLast = imageIndexLast + 1;
+		
+		            imageIndexFirst = imageIndexFirst + 1;
+		
+		//  Change next "button" to silver if we are at the end
+		
+		            if (imageIndexLast == maxIndex)
+		
+		            {
+		
+		                document.getElementById('scrollNextCell').setAttribute('style','color: Silver')
+		
+		            }
+		
+		// Changescrollbar images in a set delay sequence to give a pseudo-animated effect
+		
+		            currentIndex = imageIndexLast;
+		
+		            changeImage('scrollThumb4',imageData[currentIndex][0]);
+		
+		            changeImageOnMouseOver('scrollThumb4',currentIndex);
+		
+		            currentIndex = imageIndexLast - 1;
+		
+		            setTimeout("changeImage('scrollThumb3',imageData[" + currentIndex + "][0])",25);
+		
+		            setTimeout("changeImageOnMouseOver('scrollThumb3'," + currentIndex + ")",25);
+		
+		            currentIndex = imageIndexLast - 2;
+		
+		            setTimeout("changeImage('scrollThumb2',imageData[" + currentIndex + "][0])",50);
+		
+		            setTimeout("changeImageOnMouseOver('scrollThumb2'," + currentIndex + ")",50);
+		
+		            currentIndex = imageIndexLast - 3;
+		
+		            setTimeout("changeImage('scrollThumb1',imageData[" + currentIndex + "][0])",75);
+		
+		            setTimeout("changeImageOnMouseOver('scrollThumb1'," + currentIndex + ")",75);
+		
+		// Wait and check to see if user is still hovering over button
+		
+		// This pause gives the user a chance to move away from the button and stop scrolling
+		
+		            setTimeout("scrollAgain('" + scrollDirection + "')",1000);
+		
+		        }
+		
+		    }
+		
+		    else
+		
+		    {
+		
+		// Only do work if we are not to the first image
+		
+		        if (imageIndexFirst != minIndex)
+		
+		        {
+		
+		// We set the color to black for both before we begin
+		
+		// If we reach the end during the process we'll change the "button" color to silver
+		
+		            document.getElementById('scrollPreviousCell').setAttribute('style','color: Black')
+		
+		            document.getElementById('scrollNextCell').setAttribute('style','color: Black')
+		
+		// Move our tracking indexes down one
+		
+		            imageIndexLast = imageIndexLast - 1;
+		
+		            imageIndexFirst = imageIndexFirst - 1;
+		
+		//  Change previous "button" to silver if we are at the beginning
+		
+		            if (imageIndexFirst == minIndex)
+		
+		            {
+		
+		                document.getElementById('scrollPreviousCell').setAttribute('style','color: Silver')
+		
+		            }
+		
+		// Change scrollbar images in a set delay sequence to give a pseudo-animated effect
+		
+		            currentIndex = imageIndexFirst;
+		
+		            changeImage('scrollThumb1',imageData[currentIndex][0]);
+		
+		            changeImageOnMouseOver('scrollThumb1',currentIndex);
+		
+		            currentIndex = imageIndexFirst + 1;
+		
+		            setTimeout("changeImage('scrollThumb2',imageData[" + currentIndex + "][0])",25);
+		
+		            setTimeout("changeImageOnMouseOver('scrollThumb2'," + currentIndex + ")",25);
+		
+		            currentIndex = imageIndexFirst + 2;
+		
+		            setTimeout("changeImage('scrollThumb3',imageData[" + currentIndex + "][0])",50);
+		
+		            setTimeout("changeImageOnMouseOver('scrollThumb3'," + currentIndex + ")",50);
+		
+		            currentIndex = imageIndexFirst + 3;
+		
+		            setTimeout("changeImage('scrollThumb4',imageData[" + currentIndex + "][0])",75);
+		
+		            setTimeout("changeImageOnMouseOver('scrollThumb4'," + currentIndex + ")",75);
+		
+		// Wait and check to see if user is still hovering over button
+		
+		// This pause gives the user a chance to move away from the button and stop scrolling
+		
+		            setTimeout("scrollAgain('" + scrollDirection + "')",1000);
+		
+		        }
+		
+		    }
+		
+		}
+		
+		
+		// This function determines whether or not to keep scrolling
+		
+		function scrollAgain(scrollDirection)
+		
+		{
+		
+		    if (continueScroll == 1)
+		
+		    {
+		
+		        scrollImages(scrollDirection);
+		
+		    }
+		
+		}
+		
+		
+		// This function kicks off scrolling down (left)
+		
+		function scrollPrevious() {
+		
+		    continueScroll = 1;
+		
+		    scrollImages('down');
+		
+		}
+		
+		
+		// This function kicks off scrolling up (right)
+		
+		function scrollNext() {
+		
+		    continueScroll = 1;
+		
+		    scrollImages('up');
+		
+		}
+		
+		
+		// This function stops the scrolling action
+		
+		function scrollStop() {
+		
+		    continueScroll = 0;
+		
+		}
+		
+		
+		</script>
+    
+    
+    
+    
+    
 </head>
 
 <body>
@@ -51,9 +409,9 @@
 
             // The person is logged into Facebook, but not your app.
 
-            document.getElementById('status').innerHTML = 'Please log ' +
+            document.getElementById('status').innerHTML = '' +
 
-                    'into this app.';
+                    '';
 
         } else {
 
@@ -61,9 +419,9 @@
 
             // they are logged into this app or not.
 
-            document.getElementById('status').innerHTML = 'Please log ' +
+            document.getElementById('status').innerHTML = ' ' +
 
-                    'into Facebook.';
+                    '';
 
         }
 
@@ -146,10 +504,9 @@
                 //checkLoginState();
                 var link = '/me/permissions?access_token=' + response.authResponse.accessToken;
                 accessToken = response.authResponse.accessToken;
-                document.getElementById('status').innerHTML = 'access - ' + accessToken;
-
-
-                        console.log("access - " + accessToken);
+                
+                        //console.log("access - " + accessToken);
+                       
                 FB.api(link, function (res) {
                 	jQuery.ajax({
             	        type: "POST",
@@ -160,7 +517,7 @@
             	        success: function (data, status, jqXHR) {
             	             
             	             alert(status);
-            	             window.location.href="/success"
+            	             //window.location.href="/Recommendation"
             	        },
             	    
             	        error: function (jqXHR, status, textStatus) {            
@@ -233,22 +590,103 @@
 
 
     }
-
 </script>
 
-</body>
+<body >
+
+<table width="100%">
+<tr>
+	<td valign="top">
+		<div align="left"> 
+		<input type="image" src="${pageContext.request.contextPath}/resources/images/facebooklogin.png" style="width:200px;height:50px" onclick="fblogin();"></button>
+		</div>
+		<div align="center"> 
+	</td>
+	<td valign="top">
+	<div id="picDisplay" style="display:none">
+				<table border="0" cellpadding="5" cellspacing="0" width="1000px">
+				
+				    <tr>
+				
+				        <td align="center" colspan="6" style="font-weight: bold; font-size: 18pt; color: silver;" id="imageTitleCell">
+				
+				            </td>
+				
+				    </tr>
+				
+				    <tr>
+				
+				        <td align="center" colspan="6" >
+				
+				            <img height="500" src="" style="border-right: 1px solid; border-top: 1px solid; border-left: 1px solid;
+				
+				border-bottom: 1px solid" width="500" id="imageLarge" alt="default" /></td>
+				
+				    </tr>
+				
+				    <tr>
+				
+				        <td align="left" colspan="6" style="padding-right: 100px; padding-left: 100px; color: white;" id="imageDescriptionCell">
+				
+				            </td>
+				
+				    </tr>
+				</table>
+			</div>
+		</td>
+		<td valign="top">
+		<div id="picSmall" style="display:none">
+		<table border="0" cellpadding="5" cellspacing="0" width="1000px">
+				    <tr>
+				
+				        <td id="scrollPreviousCell" style="color: Silver" onmouseover="scrollPrevious();" onmouseout="scrollStop();">
+				
+				            &lt;&lt; Previous</td>
+				
+				</tr>
+				<tr>
+				        <td>
+				
+				            <img id="scrollThumb1" height="100" src="" style="border-right: 1px solid; border-top: 1px solid; border-left: 1px solid;
+				
+				border-bottom: 1px solid" width="100" onmouseover="handleThumbOnMouseOver(0);" /></td>
+				</tr>
+				<tr>
+				        <td>
+				
+				            <img id="scrollThumb2" height="100" src="" style="border-right: 1px solid; border-top: 1px solid; border-left: 1px solid;
+				
+				border-bottom: 1px solid" width="100" onmouseover="handleThumbOnMouseOver(1);" /></td>
+				</tr>
+				<tr>
+				        <td>
+				
+				            <img id="scrollThumb3" height="100" src="" style="border-right: 1px solid; border-top: 1px solid; border-left: 1px solid;
+				
+				border-bottom: 1px solid" width="100" onmouseover="handleThumbOnMouseOver(2);" /></td>
+				</tr>
+				<tr>
+				        <td>
+				
+				            <img id="scrollThumb4" height="100" src="" style="border-right: 1px solid; border-top: 1px solid; border-left: 1px solid;
+				
+				border-bottom: 1px solid" width="100" onmouseover="handleThumbOnMouseOver(3);" /></td>
+				</tr>
+				<tr>
+				        <td id="scrollNextCell" style="color: Black" onmouseover="scrollNext();" onmouseout="scrollStop();">
+				
+				            Next &gt;&gt;</td>
+				
+				    </tr>
+		
+			</table>
+			</div>
+		</td>
+	</tr>
+</table>
 
 
 
-<div id="map"  style="display: none;">
-    <iframe
-            width="450"
-            height="250"
-            frameborder="0" style="border:0"
-            src="https://www.google.com/maps/embed/v1/view?key=AIzaSyADPFI1pmVJZd480KUEgbhGpQINNTVXReU&center=-33.8569,151.2152">
-    </iframe>
 
 
 </div>
-
-<button name="x" onclick="fblogin();"></button>

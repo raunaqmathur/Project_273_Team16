@@ -134,4 +134,17 @@ MongoOperations mongoOperation =
 		return "";
 	}
 	
+	@RequestMapping(value="/maplogin",method=RequestMethod.POST)
+	@ResponseBody
+	public Object FBDB1(@RequestBody String accesstoken){
+		//System.out.println(accesstoken.replaceAll("\"",""));
+		System.out.println("maplogin");
+		/*try {
+			FBDBController.SyncFBDB(accesstoken.replaceAll("\"",""));
+		} catch (FacebookException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}*/
+		return "";
+	}
 }

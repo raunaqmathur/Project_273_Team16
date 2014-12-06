@@ -59,7 +59,7 @@ public class User {
 		try {
 		   if(cursor.hasNext()) {
 			  DBObject dbotemp = cursor.next();   
-			   lastSync = dbotemp.get("lastSync").toString();
+			   lastSync = dbotemp.get("lastSync").toString().replace("[", "").replace("]", "").replace("\"", "").trim();
 			   /*System.out.println("lastSync: "+ lastSync);
 			  lastSync =  lastSync.split("\"")[1];
 			  lastSync =  lastSync.split("\"")[0];

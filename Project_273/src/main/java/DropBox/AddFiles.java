@@ -13,11 +13,42 @@ import facebook4j.internal.org.json.JSONArray;
 import java.io.*;
 import java.net.URL;
 import java.util.Locale;
+import java.util.Properties;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class AddFiles {
 	public void uploadFile(String threadName, String parentId,  ResponseList<JSONObject> jsonObjectPhotos) throws IOException, DbxException, JSONException {
-        // Get your app key and secret from the Dropbox developers website.
+        
+		String downloadPath = "";
+		
+		//Accessing config file
+		
+		
+		File configFile = new File("application.properties");
+		 
+		try {
+		    FileReader reader = new FileReader(configFile);
+		    Properties props = new Properties();
+		    props.load(reader);
+		 
+		     downloadPath = props.getProperty("downloadPath");
+		 
+		   
+		    reader.close();
+		} catch (FileNotFoundException ex) {
+		    // file does not exist
+		} catch (IOException ex) {
+		    // I/O error
+		}
+		
+		//////////////////////////
+		
+		
+		
+		
+		
+		
+		
         final String APP_KEY = "2uguk7d5cb3n4xm";
         final String APP_SECRET = "wxib4jn5nym6m27";
 
@@ -45,7 +76,7 @@ public class AddFiles {
         	client.createFolder("/"+parentId);
         FileInputStream inputStream = null;
         
-        (new File("./img/downloadedImages/" + threadName)).mkdirs();
+        (new File(downloadPath + threadName)).mkdirs();
         
         //Opening Database Connection
         OpenDatabase opDB = new OpenDatabase("UserPhotosPlaces");
@@ -54,7 +85,7 @@ public class AddFiles {
         {
         	 create = false;
         	try {
-				create = saveImage(threadName,data.getString("source"),data.getString("id"));
+				create = saveImage(threadName,data.getString("source"),data.getString("id"),downloadPath);
 			} catch (JSONException e1) {
 				e1.printStackTrace();
 			}
@@ -62,7 +93,7 @@ public class AddFiles {
         	{
 		    		try {
 		    			
-		    			File inputFile = new File("./img/downloadedImages/" + threadName + "/" + data.getString("id") + ".jpg");
+		    			File inputFile = new File(downloadPath + threadName + "/" + data.getString("id") + ".jpg");
 		    	        
 		    			inputStream = new FileInputStream(inputFile);
 		    	        
@@ -96,24 +127,24 @@ public class AddFiles {
         for (JSONObject data : jsonObjectPhotos)
         {
         	
-        	(new File("./img/downloadedImages/" + threadName + "/" + data.getString("id") + ".jpg")).delete();
+        	(new File(downloadPath + threadName + "/" + data.getString("id") + ".jpg")).delete();
         }
         
         //Closing Database Connection
         opDB.CloseDatabase();
         
         
-        File index = new File("./img/downloadedImages/" + threadName);
+        File index = new File(downloadPath + threadName);
         index.delete();
         System.out.println("deleted folder from server." );
 
 
     }
 	
-	public boolean saveImage(String threadName,String imageUrl, String id) throws IOException {
+	public boolean saveImage(String threadName,String imageUrl, String id, String downloadPath) throws IOException {
 		try {
 			URL url = new URL(imageUrl);
-			String destName = "./img/downloadedImages/" + threadName + "/" + id + ".jpg";
+			String destName = downloadPath + threadName + "/" + id + ".jpg";
 			//System.out.println(destName);
  
 			InputStream is = url.openStream();

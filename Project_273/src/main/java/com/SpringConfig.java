@@ -20,7 +20,7 @@ public class SpringConfig{
 	public @Bean
 	MongoTemplate mongoTemplate() throws Exception {
  
-		System.out.println("in spring config for mongoDB");
+		
 		MongoClient clientForMongo = new MongoClient("ds053310.mongolab.com:53310");
 		db = clientForMongo.getDB("project_273");
 		boolean auth = db.authenticate("nishant", "nishant@1".toCharArray());

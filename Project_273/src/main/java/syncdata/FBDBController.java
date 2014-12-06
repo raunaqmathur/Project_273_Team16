@@ -9,7 +9,10 @@ import DropBox.AddFiles;
 import DropBox.DownloadFiles;
 import Threading.RunThreads;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -18,6 +21,8 @@ import java.util.List;
 
 
 
+
+import java.util.Properties;
 
 import facebook4j.Place;
 import facebook4j.Checkin;
@@ -46,6 +51,7 @@ public class FBDBController
 { 
 	public static void SyncFBDB(String receive) throws FacebookException 
 	{ 
+		
 		// Setting configuration details in ConfigurationBuilder Class 
 				ConfigurationBuilder configurationBuilder = new ConfigurationBuilder(); 
 				configurationBuilder.setDebugEnabled(true); 
@@ -94,8 +100,8 @@ public class FBDBController
 					
 					parentID  = jsonObjectUser.get("id").toString();
 					
-					SearchFriendsWithPlace frdU = new SearchFriendsWithPlace();
-					frdU.GetFriendListNPhotos(parentID);
+					//SearchFriendsWithPlace frdU = new SearchFriendsWithPlace();
+					//frdU.GetFriendListNPhotos(parentID);
 					
 					BatchResponse resultUserFriends = null;
 					BatchResponse resultUserPlaces = null;
@@ -211,8 +217,15 @@ public class FBDBController
 											batch.add(new BatchRequest(RequestMethod.GET, "me/photos?fields=source,place&limit=100&after=" + after));
 											resultsPhotos = facebook.executeBatch(batch).get(0);
 											jsonObjectPhotos = resultsPhotos.asJSONObject();
-											responseListUserPhotos = facebook.executeBatch(batch).get(0).asResponseList();
 											
+											
+											///////////////////////
+											////////////////
+											///////////
+											responseListUserPhotos = facebook.executeBatch(batch).get(0).asResponseList();
+											/////////
+											//////////////
+											//////////////////////
 											rt = new RunThreads(counter,parentID,responseListUserPhotos);
 											rt.start();
 											if(jsonObjectPhotos.has("paging"))
@@ -368,8 +381,8 @@ public class FBDBController
 						}
 					}
 					
-					DownloadFiles df = new DownloadFiles();
-					df.downloadFile(uNew.userId);
+					//DownloadFiles df = new DownloadFiles();
+					//df.downloadFile(uNew.userId);
 	} 
 		catch (Exception e) 
 		{ 
